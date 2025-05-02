@@ -11,7 +11,7 @@ message VoteConfirmed {
     voter: Address;
 }
 
-message DeployBallot { }
+message DeployBallot {}
 
 struct ProposalState {
     yesCount: Int as uint32;
@@ -36,7 +36,7 @@ contract Proposal {
     }
 
     // deploy
-    receive() { }
+    receive() {}
 
     receive(msg: Vote) {
         // Voting is already finished!
@@ -46,28 +46,31 @@ contract Proposal {
         // will be part of level 5
 
         let ballot = initOf Ballot(
-        sender(),
-        myAddress(),
-        false,
+            sender(),
+            myAddress(),
+            false,
         );
         deploy(DeployParameters {
-        mode: SendRemainingValue,
-        value: 0,
-        bounce: false,
-        body: msg.toCell(),
-        init: ballot,
+            mode: SendRemainingValue,
+            value: 0,
+            bounce: false,
+            body: msg.toCell(),
+            init: ballot,
         });
     }
 
     receive(msg: VoteConfirmed) {
         let ballot = initOf Ballot(
-        msg.voter,
-        myAddress(),
-        false,
+            msg.voter,
+            myAddress(),
+            false,
         );
         throwUnless(704, ballot.hasSameBasechainAddress(sender()));
 
-        if (msg.value) { self.yesCount += 1 }
+        if (msg.value) {
+            self.yesCount += 1;
+        }
+
         self.totalCount += 1;
     }
 
@@ -75,7 +78,7 @@ contract Proposal {
         return ProposalState {
             yesCount: self.yesCount,
             noCount: self.totalCount - self.yesCount,
-        }
+        };
     }
 }
 
@@ -83,8 +86,7 @@ contract Ballot(
     voter: Address,
     proposal: Address,
     hasVoted: Bool,
-    ) {
-
+) {
     receive(msg: Vote) {
         if (self.hasVoted) {
             return;

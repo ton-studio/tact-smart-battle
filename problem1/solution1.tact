@@ -1,5 +1,5 @@
 //
-// Reference solution of Problem #1
+// Reference solution
 //
 
 message Vote {
@@ -30,7 +30,7 @@ contract Proposal {
     }
 
     // deploy
-    receive() { }
+    receive() {}
 
     receive(msg: Vote) {
         // There cannot be more than 100 voters
@@ -42,16 +42,20 @@ contract Proposal {
         throwUnless(702, !self.voters.exists(sender));
 
         self.voters.set(sender, true);
-        if (msg.value) { self.yesCount += 1 }
-    self.totalCount += 1;
 
-    cashback(sender());
+        if (msg.value) {
+            self.yesCount += 1;
+        }
+
+        self.totalCount += 1;
+
+        cashback(sender());
     }
 
     get fun proposalState(): ProposalState {
         return ProposalState {
             yesCount: self.yesCount,
             noCount: self.totalCount - self.yesCount,
-        }
+        };
     }
 }

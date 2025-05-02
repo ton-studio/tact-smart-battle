@@ -1,3 +1,7 @@
+//
+// Reference solution
+//
+
 struct ProposalInit {
     master: Address;
     proposalId: Int as uint32;
@@ -35,10 +39,10 @@ contract ProposalMaster {
             init: proposalInit,
             mode: SendRemainingValue,
             value: 0,
-            body: (StartVoting {
-            cashbackAddress: sender(),
-            votingEndingAt: msg.votingEndingAt,
-            }).toCell(),
+            body: StartVoting {
+                cashbackAddress: sender(),
+                votingEndingAt: msg.votingEndingAt,
+            }.toCell(),
         });
 
         self.nextProposalId += 1;
@@ -99,7 +103,11 @@ contract Proposal {
         throwUnless(702, !self.voters.exists(sender));
 
         self.voters.set(sender, true);
-        if (msg.value) { self.yesCount += 1 }
+
+        if (msg.value) {
+            self.yesCount += 1;
+        }
+
         self.totalCount += 1;
 
         cashbackBalance(sender());
@@ -112,7 +120,7 @@ contract Proposal {
             master: self.master,
             proposalId: self.proposalId,
             votingEndingAt: self.votingEndingAt,
-        }
+        };
     }
 }
 
