@@ -1,3 +1,7 @@
+//
+// Reference solution
+//
+
 struct ProposalInit {
     master: Address;
     proposalId: Int as uint32;
@@ -15,24 +19,23 @@ contract ProposalMaster {
     nextProposalId: Int as uint32 = 0;
 
     // deploy
-    receive() {
-    }
+    receive() {}
 
     receive(msg: DeployNewProposal) {
         require(msg.votingEndingAt >= now(), "Voting must end in the future");
 
         let proposalInit = initOf Proposal(ProposalInit {
-        master: myAddress(),
-        proposalId: self.nextProposalId,
+            master: myAddress(),
+            proposalId: self.nextProposalId,
         });
 
         deploy(DeployParameters {
-        init: proposalInit,
-        mode: SendRemainingValue,
-        value: 0,
-        body: (StartVoting {
-        votingEndingAt: msg.votingEndingAt,
-        }).toCell(),
+            init: proposalInit,
+            mode: SendRemainingValue,
+            value: 0,
+            body: StartVoting {
+                votingEndingAt: msg.votingEndingAt,
+            }.toCell(),
         });
 
         self.nextProposalId += 1;
@@ -91,7 +94,11 @@ contract Proposal {
         throwUnless(702, !self.voters.exists(sender));
 
         self.voters.set(sender, true);
-        if (msg.value) { self.yesCount += 1 }
+
+        if (msg.value) {
+            self.yesCount += 1;
+        }
+
         self.totalCount += 1;
     }
 
@@ -102,6 +109,6 @@ contract Proposal {
             master: self.master,
             proposalId: self.proposalId,
             votingEndingAt: self.votingEndingAt,
-        }
+        };
     }
 }
