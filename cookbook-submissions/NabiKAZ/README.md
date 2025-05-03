@@ -21,8 +21,8 @@ This repository contains solutions and tests for a series of problems labeled A 
   - [x] Solution
   - [x] Tests
 
-- [ ] **Problem C**  
-  - [ ] Solution
+- [x] **Problem C**  
+  - [x] Solution
   - [x] Tests
 
 - [ ] **Problem D**  
